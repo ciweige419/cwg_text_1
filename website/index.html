@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>女性性心理与身体愉悦模式专业评估 (SRI-Pro)</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* 保持 V3 的专业蓝白风格 */
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-sub: #6b7280;
+            --accent: #2563eb; /* 皇家蓝 */
+            --accent-light: #eff6ff;
+            --shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        .container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 550px;
+            padding: 35px 25px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 首页排版 */
+        h1 { font-size: 1.6rem; font-weight: 700; color: #111827; margin-bottom: 10px; line-height: 1.3; }
+        .badge {
+            display: inline-block; background: #dbeafe; color: #1e40af; 
+            padding: 4px 12px; border-radius: 99px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+        
+        /* 题目区域 */
+        .question-meta {
+            font-size: 0.85rem; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block; text-align: left;
+        }
+        h3 { font-size: 1.15rem; font-weight: 600; line-height: 1.6; margin: 0 0 25px 0; text-align: left; color: #374151; }
+
+        /* 选项按钮 */
+        .btn {
+            display: block; width: 100%; padding: 16px 20px; margin: 12px 0;
+            background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
+            color: #4b5563; text-align: left; cursor: pointer; transition: all 0.2s;
+            font-size: 0.95rem; line-height: 1.5;
+        }
+        .btn:active { background: #f3f4f6; border-color: var(--accent); transform: scale(0.99); }
+        
+        .primary-btn {
+            background: var(--accent); color: white; border: none; text-align: center;
+            font-weight: 600; font-size: 1rem; padding: 18px; margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+        .primary-btn:hover { background: #1d4ed8; }
+
+        /* 进度条 */
+        .progress-bar-bg { width: 100%; height: 4px; background: #e5e7eb; margin-bottom: 30px; border-radius: 2px; }
+        .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease; border-radius: 2px; }
+
+        /* 结果页 */
+        .chart-box { height: 300px; width: 100%; margin: 20px 0; }
+        .report-card { background: #f9fafb; border-left: 4px solid var(--accent); padding: 20px; border-radius: 8px; text-align: left; margin-bottom: 25px; }
+        .report-title { font-weight: 700; color: #111827; margin-bottom: 8px; display: block; }
+        .report-text { font-size: 0.9rem; color: #4b5563; line-height: 1.6; text-align: justify; }
+
+        .rec-link {
+            display: flex; align-items: center; justify-content: space-between;
+            background: #1e293b; color: white; padding: 16px 24px; border-radius: 12px;
+            text-decoration: none; font-weight: 600; font-size: 0.95rem; margin-top: 10px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 辅助元素 */
+        .loader-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.98); z-index: 50;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .spinner {
+            width: 40px; height: 40px; border: 3px solid #e5e7eb; border-top-color: var(--accent);
+            border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .hidden { display: none; }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="start-screen" class="fade-in">
+        <span class="badge">SRI-PRO 心理评估系统 v4.0</span>
+        <h1>女性性心理与<br>身体愉悦模式评估</h1>
+        <p style="font-size: 0.95rem; color: #666; margin: 20px 0 30px;">
+            本测评基于<b>双重控制模型 (Dual Control Model)</b> 开发。<br>
+            包含 24 项专业维度指标，用时约 5-8 分钟。<br>
+            旨在解析您潜意识中的兴奋抑制机制与感官偏好。
+        </p>
+        <div style="text-align: left; background: #f3f4f6; padding: 15px; border-radius: 8px; font-size: 0.8rem; color: #666; margin-bottom: 30px;">
+            ✓ 匿名性保护：所有计算在本地完成<br>
+            ✓ 适宜人群：18岁以上女性<br>
+            ✓ 评估维度：感官阈值 / 心理张力 / 依恋模式
+        </div>
+        <button class="btn primary-btn" onclick="startQuiz()">开始专业评估</button>
+    </div>
+
+    <div id="quiz-screen" class="hidden">
+        <div class="progress-bar-bg"><div class="progress-fill" id="progress"></div></div>
+        <span class="question-meta" id="q-number">QUESTION 1/24</span>
+        <h3 id="question-text">...</h3>
+        <div id="options-container"></div>
+    </div>
+
+    <div id="loading-screen" class="hidden loader-overlay">
+        <div class="spinner"></div>
+        <p style="font-weight: 600; color: #374151;">正在生成分析模型...</p>
+        <p style="font-size: 0.8rem; color: #9ca3af; margin-top: 5px;">整合 24 个维度的生理反馈</p>
+    </div>
+
+    <div id="result-screen" class="hidden fade-in">
+        <span class="badge" style="background: #ecfdf5; color: #059669;">评估完成</span>
+        <h2 id="result-title" style="margin: 0 0 5px 0;">...</h2>
+        <p id="result-subtitle" style="color: #6b7280; font-size: 0.9rem; margin-bottom: 20px;">...</p>
+        
+        <div class="chart-box">
+            <canvas id="radarChart"></canvas>
+        </div>
+
+        <div class="report-card">
+            <span class="report-title">🔬 临床分析摘要</span>
+            <p id="result-desc" class="report-text">...</p>
+        </div>
+
+        <div style="text-align: left;">
+            <h4 style="margin: 0 0 10px 0; color: #1f2937;">💡 专家建议与适配方案</h4>
+            <p id="product-desc" style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">...</p>
+            <a href="#" id="product-link" class="rec-link" target="_blank">
+                <span>查看您的专属适配器具</span>
+                <span style="opacity: 0.8;">→</span>
+            </a>
+        </div>
+        
+        <button class="btn" onclick="location.reload()" style="margin-top: 30px; text-align: center; color: #9ca3af; border: none; background: transparent;">重新测试</button>
+    </div>
+</div>
+
+<script>
+    /* 题库设计说明：
+       A = Sensor (氛围/敏感)
+       B = Sprinter (强度/直接)
+       C = Diver (深度/依恋)
+       D = Kinkster (控制/心理)
+       
+       共24题，每类6题，混杂排序。
+    */
+    const questions = [
+        // 第一阶段：感官偏好 (Sensory Input)
+        { text: "1. 关于“理想的接触方式”，您的身体更倾向于：", options: [
+            { text: "像羽毛扫过皮肤般的轻柔触碰", type: "A" },
+            { text: "强有力、带有节奏感的抓握或撞击", type: "B" },
+            { text: "大面积的、沉重的身体挤压感", type: "C" },
+            { text: "被限制住活动范围的束缚感", type: "D" }
+        ]},
+        { text: "2. 在性活动开始前，哪种因素最容易让您“下头”（抑制兴奋）？", options: [
+            { text: "环境嘈杂、灯光太亮或有异味", type: "A" },
+            { text: "前戏过于冗长，让人失去耐心", type: "B" },
+            { text: "感觉不到对方的情感投入", type: "C" },
+            { text: "过程太顺从、缺乏挑战性或惊喜", type: "D" }
+        ]},
+        { text: "3. 这种声音最能引起您的生理反应：", options: [
+            { text: "耳边的低语和急促的呼吸声", type: "A" },
+            { text: "毫不掩饰的高声叫喊或撞击声", type: "B" },
+            { text: "深沉的、表达爱意的名字呼唤", type: "C" },
+            { text: "命令式的语气或特定词汇", type: "D" }
+        ]},
+        { text: "4. 对于“润滑”这件事，您的真实体验通常是：", options: [
+            { text: "需要较长时间的心理预热和前戏才能准备好", type: "A" },
+            { text: "只要受到直接刺激，反应通常很快", type: "B" },
+            { text: "与情感浓度挂钩，动情时自然会有反应", type: "C" },
+            { text: "在感到紧张、羞耻或恐惧时反而更充沛", type: "D" }
+        ]},
+        
+        // 第二阶段：心理机制 (Psychological Mechanism)
+        { text: "5. 您脑海中最常出现的性幻想场景通常涉及：", options: [
+            { text: "极度唯美、模糊的浪漫场景", type: "A" },
+            { text: "纯粹的器官特写或感官刺激片段", type: "B" },
+            { text: "与特定对象完全融为一体的感觉", type: "C" },
+            { text: "被强迫、被围观或某种角色扮演", type: "D" }
+        ]},
+        { text: "6. 当您感到压力巨大时，性对您意味着：", options: [
+            { text: "很难提起兴趣，压力会抑制欲望", type: "A" },
+            { text: "最好的发泄方式，想要一次快速的高潮", type: "B" },
+            { text: "寻求安慰和安全感的途径", type: "C" },
+            { text: "一种逃避现实、进入另一个角色的方式", type: "D" }
+        ]},
+        { text: "7. 在性行为中，您对“目光接触”的态度是：", options: [
+            { text: "羞涩，喜欢闭眼感受身体触觉", type: "A" },
+            { text: "不重要，更关注身体感觉", type: "B" },
+            { text: "非常重要，喜欢深情对视", type: "C" },
+            { text: "喜欢被审视、被盯着看的压迫感", type: "D" }
+        ]},
+        { text: "8. 您如何看待性爱中的“疼痛感”？", options: [
+            { text: "完全抗拒，任何痛感都会让我出戏", type: "A" },
+            { text: "如果是为了达到高潮，可以忍受", type: "B" },
+            { text: "如果是情感激烈的表达，可以接受", type: "C" },
+            { text: "某种程度的痛感（如打屁股）能让我更兴奋", type: "D" }
+        ]},
+
+        // 第三阶段：行为模式 (Behavioral Patterns)
+        { text: "9. 关于辅助玩具（Toys），您的看法是：", options: [
+            { text: "偏好外观可爱、不像性器具的产品", type: "A" },
+            { text: "必须功能强大、震感强烈才有用", type: "B" },
+            { text: "希望是能模拟真实体感或温度的", type: "C" },
+            { text: "喜欢功能特殊（如约束、电击）的道具", type: "D" }
+        ]},
+        { text: "10. 您通常如何达到高潮？", options: [
+            { text: "很难，需要极其放松的环境和特定技巧", type: "A" },
+            { text: "很容易，只要刺激对位置（通常是阴蒂）", type: "B" },
+            { text: "混合型，阴道内刺激更容易让我满足", type: "C" },
+            { text: "心理高潮比生理高潮更强烈", type: "D" }
+        ]},
+        { text: "11. 结束后（Aftercare），您最希望对方做的是：", options: [
+            { text: "帮我清理，盖好被子，温柔地夸赞", type: "A" },
+            { text: "不要太多打扰，让我休息或睡觉", type: "B" },
+            { text: "长时间的拥抱，聊聊天", type: "C" },
+            { text: "保持这种关系的张力，直到我说停止", type: "D" }
+        ]},
+        { text: "12. 如果对方提出尝试新玩法，您的第一反应通常是：", options: [
+            { text: "犹豫，担心会不舒服或破坏气氛", type: "A" },
+            { text: "只要能爽，怎么都行", type: "B" },
+            { text: "只要是我们两个人一起探索，我都愿意", type: "C" },
+            { text: "兴奋，特别是如果涉及一些禁忌话题", type: "D" }
+        ]},
+
+        // 第四阶段：深层潜意识 (Subconscious) - 快速反应
+        { text: "13. 选一个词形容您的身体：", options: [
+            { text: "敏感的花朵", type: "A" },
+            { text: "精密的机器", type: "B" },
+            { text: "深邃的海洋", type: "C" },
+            { text: "等待调教的宠物", type: "D" }
+        ]},
+        { text: "14. 您更喜欢哪种节奏？", options: [
+            { text: "极慢，甚至静止", type: "A" },
+            { text: "极快，冲刺不断", type: "B" },
+            { text: "深沉，缓慢推进", type: "C" },
+            { text: "忽快忽慢，不可预测", type: "D" }
+        ]},
+        { text: "15. 哪种情形会让您产生“性羞耻”？", options: [
+            { text: "身体发出奇怪的声音或表情失控", type: "A" },
+            { text: "这很正常，我很少感到羞耻", type: "B" },
+            { text: "觉得自己不够完美，担心对方失望", type: "C" },
+            { text: "羞耻感正是我兴奋的来源", type: "D" }
+        ]},
+        { text: "16. 您对于“镜子”的态度：", options: [
+            { text: "不喜欢在做的时候看到自己", type: "A" },
+            { text: "偶尔看看，确认姿势", type: "B" },
+            { text: "看着镜子里的我们结合会更兴奋", type: "C" },
+            { text: "看着镜子里失态的自己会极度兴奋", type: "D" }
+        ]},
+
+        // 第五阶段：综合验证 (Validation)
+        { text: "17. 您认为最完美的性爱时长是：", options: [
+            { text: "不重要，重要的是前戏和氛围要够久", type: "A" },
+            { text: "15-20分钟，高效率解决战斗", type: "B" },
+            { text: "越久越好，希望能持续一整晚", type: "C" },
+            { text: "时长不限，取决于玩法的复杂度", type: "D" }
+        ]},
+        { text: "18. 您对口交的态度：", options: [
+            { text: "需要非常放松和信任才能享受", type: "A" },
+            { text: "非常喜欢，是最快的高潮方式", type: "B" },
+            { text: "喜欢为对方服务的感觉", type: "C" },
+            { text: "喜欢其中的强迫感或深喉体验", type: "D" }
+        ]},
+        { text: "19. 关于“粗口”（Dirty Talk）：", options: [
+            { text: "不太喜欢，觉得破坏美感", type: "A" },
+            { text: "无所谓，如果能助兴也可以", type: "B" },
+            { text: "听对方说爱我会更兴奋", type: "C" },
+            { text: "非常喜欢被辱骂或羞辱", type: "D" }
+        ]},
+        { text: "20. 您是否曾经假装高潮？", options: [
+            { text: "有过，因为想早点结束尴尬", type: "A" },
+            { text: "很少，如果不爽我会直接说", type: "B" },
+            { text: "有过，为了让对方有成就感", type: "C" },
+            { text: "不需要假装，表演也是游戏的一部分", type: "D" }
+        ]},
+        { text: "21. 如果可以，您希望对方是：", options: [
+            { text: "温柔的守护者", type: "A" },
+            { text: "强力的征服者", type: "B" },
+            { text: "灵魂的伴侣", type: "C" },
+            { text: "严厉的主人", type: "D" }
+        ]},
+        { text: "22. 您对身体哪个部位最自信/敏感？", options: [
+            { text: "脖颈、耳朵或背部", type: "A" },
+            { text: "私处（C点）", type: "B" },
+            { text: "胸部或臀部", type: "C" },
+            { text: "不特定，取决于如何被对待", type: "D" }
+        ]},
+        { text: "23. 甚至不需要脱衣服，以下哪种行为能让你腿软？", options: [
+            { text: "闻到对方身上好闻的香水味", type: "A" },
+            { text: "看到对方隆起的肌肉线条", type: "B" },
+            { text: "深情的眼神锁定", type: "C" },
+            { text: "在公共场合悄悄把手伸过来", type: "D" }
+        ]},
+        { text: "24. (最终确认) 直觉告诉您，您的核心属性是：", options: [
+            { text: "需要被呵护的", type: "A" },
+            { text: "充满欲望的", type: "B" },
+            { text: "渴望连接的", type: "C" },
+            { text: "享受臣服的", type: "D" }
+        ]}
+    ];
+
+    const results = {
+        "A": {
+            title: "Sensor | 氛围感知型",
+            subtitle: "“我的身体是一把精密的小提琴，需要耐心的调音。”",
+            desc: "评估显示您的**感官敏感度（Sensory Sensitivity）**极高。您的快感机制并非简单的“开关式”，而是“累积式”。中枢神经对环境（光线、气味、温度）的细微变化高度敏感。您最大的痛点在于“起飞困难”——这通常不是因为性冷淡，而是因为未能解除大脑皮层的抑制状态。你需要的是非直接的、多维度的唤醒。",
+            productDesc: "您的身体抗拒粗鲁的物理摩擦。推荐使用**吮吸类（空气波）**玩具，这种非接触式的刺激能绕过您的痛觉防御；配合香氛与眼罩使用效果更佳。",
+            link: "pay.html",
+            stats: [95, 40, 60, 20, 80] // [敏感度, 强度偏好, 深度依恋, 支配受虐, 幻想力]
+        },
+        "B": {
+            title: "Sprinter | 强度刺激型",
+            subtitle: "“直面欲望，我是忠于本能的享乐主义者。”",
+            desc: "您的性反应模式属于**高唤起/低抑制（High Excitation / Low Inhibition）**类型。您拥有令人羡慕的直率身体，生理连接通路非常通畅。对您而言，性爱是多巴胺的高效释放。您对阴蒂（C点）的高频震动具有极高的反应度，而冗长且缺乏重点的前戏反而会消耗您的耐心。您追求的是纯粹、强烈、甚至带有攻击性的高潮体验。",
+            productDesc: "普通的玩具对您来说就是隔靴搔痒。您需要的是**大马力、震感深沉**的魔棒类或高频跳蛋。放弃那些花哨的功能，追求极致的功率。",
+            link: "pay.html",
+            stats: [40, 95, 50, 30, 50]
+        },
+        "C": {
+            title: "Diver | 深度融合型",
+            subtitle: "“我渴望的不是摩擦，而是被填满的完整。”",
+            desc: "您的快感来源于**身心的一致性（Mind-Body Congruence）**。单一的表层刺激（Clitoral）很难满足您，您更追求阴道内部的充盈感与压迫感。评估显示您具有较强的依恋需求，性行为是您确认关系安全感的重要途径。在没有情感连接或眼神交流的情况下，您的身体可能会产生解离感（Dissociation），导致无法投入。",
+            productDesc: "建议选择**G点探索型**或**U型双头共振**玩具。重点在于“充实感”和“体内震动”，这类玩具能模拟真实的结合感，满足您的深度需求。",
+            link: "pay.html",
+            stats: [60, 50, 95, 40, 70]
+        },
+        "D": {
+            title: "Kinkster | 心理张力型",
+            subtitle: "“在失控与臣服的边缘，我找到了极致的自由。”",
+            desc: "您的性心理机制最为复杂独特。单纯的生理快感对您来说是乏味的，您的兴奋源于**权力交换（Power Exchange）**与**心理张力**。羞耻感、恐惧转化（Fear Transformation）、被掌控感或痛感，是您大脑中独特的催情剂。您潜意识里渴望交出控制权，或者通过扮演某种角色来释放由于社会规训带来的压力。",
+            productDesc: "常规震动棒治标不治本。您需要的是**感官剥夺（眼罩/耳塞）**、**束缚带**或**SP拍打板**。通过限制身体自由或引入轻微痛感，能瞬间激活您的交感神经。",
+            link: "pay.html",
+            stats: [70, 60, 50, 95, 90]
+        }
+    };
+
+    // 逻辑部分
+    let currentQ = 0;
+    let scores = { A: 0, B: 0, C: 0, D: 0 };
+
+    function startQuiz() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('quiz-screen').classList.remove('hidden');
+        loadQ();
+    }
+
+    function loadQ() {
+        const q = questions[currentQ];
+        document.getElementById('q-number').innerText = `QUESTION ${currentQ + 1}/${questions.length}`;
+        document.getElementById('question-text').innerText = q.text;
+        
+        // 更新进度条
+        const percent = ((currentQ) / questions.length) * 100;
+        document.getElementById('progress').style.width = percent + '%';
+
+        const div = document.getElementById('options-container');
+        div.innerHTML = '';
+        
+        q.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'btn';
+            btn.innerText = opt.text;
+            btn.onclick = () => {
+                scores[opt.type]++;
+                currentQ++;
+                if(currentQ < questions.length) {
+                    loadQ();
+                } else {
+                    showLoading();
+                }
+            }
+            div.appendChild(btn);
+        });
+    }
+
+    function showLoading() {
+        document.getElementById('quiz-screen').classList.add('hidden');
+        document.getElementById('loading-screen').classList.remove('hidden');
+        // 假装计算更久一点，显得更专业
+        setTimeout(() => {
+            document.getElementById('loading-screen').classList.add('hidden');
+            showResult();
+        }, 2000);
+    }
+
+    function showResult() {
+        document.getElementById('result-screen').classList.remove('hidden');
+        
+        const type = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+        const data = results[type];
+
+        document.getElementById('result-title').innerText = data.title;
+        document.getElementById('result-subtitle').innerText = data.subtitle;
+        document.getElementById('result-desc').innerHTML = data.desc; // 支持HTML标签
+        document.getElementById('product-desc').innerText = data.productDesc;
+        document.getElementById('product-link').href = data.link;
+
+        renderChart(data.stats);
+    }
+
+    function renderChart(dataValues) {
+        const ctx = document.getElementById('radarChart').getContext('2d');
+        if (window.myRadarChart) window.myRadarChart.destroy();
+        
+        window.myRadarChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['感官敏感', '强度偏好', '深度依恋', '支配/受虐', '幻想力'],
+                datasets: [{
+                    label: '各项指标评分',
+                    data: dataValues,
+                    backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                    borderColor: '#2563eb',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#2563eb'
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        angleLines: { color: '#e5e7eb' },
+                        grid: { color: '#e5e7eb' },
+                        pointLabels: { color: '#4b5563', font: {size: 11, weight: '600'} },
+                        suggestedMin: 0,
+                        suggestedMax: 100,
+                        ticks: { display: false }
+                    }
+                },
+                plugins: { legend: { display: false } },
+                maintainAspectRatio: false
+            }
+        });
+    }
+</script>
+</body>
+</html>
