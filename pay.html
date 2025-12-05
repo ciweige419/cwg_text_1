@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>解锁完整版深度报告</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --accent: #2563eb;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+        .container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        h1 { margin: 0 0 10px 0; font-size: 1.4rem; color: #111827; }
+        .subtitle { color: #6b7280; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.5; }
+        
+        /* 价格标签 */
+        .price-tag {
+            background: #eff6ff; color: var(--accent); display: inline-block;
+            padding: 10px 25px; border-radius: 50px; font-weight: 700; font-size: 1.5rem;
+            margin-bottom: 25px; border: 1px solid #dbeafe;
+        }
+        .price-tag span { font-size: 0.9rem; font-weight: normal; margin-right: 2px; }
+
+        /* 二维码区域 */
+        .qr-box {
+            border: 2px dashed #e5e7eb; border-radius: 12px; padding: 15px;
+            margin-bottom: 25px; display: inline-block; background: #fff;
+        }
+        .qr-img { width: 220px; height: 220px; display: block; object-fit: cover; border-radius: 8px; }
+        
+        /* 步骤说明 */
+        .steps { text-align: left; background: #f9fafb; padding: 20px; border-radius: 12px; font-size: 0.9rem; color: #4b5563; margin-bottom: 25px; }
+        .steps li { margin-bottom: 8px; }
+        .steps li:last-child { margin-bottom: 0; }
+
+        /* 按钮 */
+        .btn {
+            display: block; width: 100%; padding: 16px; background: var(--accent);
+            color: white; text-decoration: none; border-radius: 12px; font-weight: 600;
+            transition: opacity 0.2s; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+            box-sizing: border-box; /* 修复按钮宽度溢出 */
+        }
+        .btn:hover { opacity: 0.9; }
+        
+        .footer-note { margin-top: 20px; font-size: 0.8rem; color: #9ca3af; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>解锁深度评估报告</h1>
+    <p class="subtitle">获取您的完整版身体愉悦说明书<br>(含5000字解析 + 实操技巧)</p>
+
+    <div class="price-tag"><span>¥</span>9.9 <span style="font-size: 0.8rem; color: #999; text-decoration: line-through; margin-left: 5px;">¥49.9</span></div>
+
+    <div class="qr-box">
+        <img src="qr.jpg" alt="扫码支付" class="qr-img">
+    </div>
+
+    <div class="steps">
+        <div style="font-weight: bold; margin-bottom: 10px; color: #111827;">🚀 获取步骤：</div>
+        <ol style="padding-left: 20px; margin: 0;">
+            <li>长按上方二维码，支付 <strong>9.9元</strong></li>
+            <li>支付备注请填写：<strong>您的推特ID</strong> (或微信昵称)</li>
+            <li>点击下方按钮添加博主，发送截图领取PDF</li>
+        </ol>
+    </div>
+
+    <a href="https://twitter.com/messages/compose?recipient_id=您的推特ID" class="btn">已支付，联系博主发货 -></a>
+    
+    <p class="footer-note">平均发货时间：10-30分钟 (人工在线)</p>
+</div>
+
+</body>
+</html>
