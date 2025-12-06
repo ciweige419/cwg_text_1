@@ -111,26 +111,132 @@
         .hidden { display: none; }
         .fade-in { animation: fadeIn 0.5s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+/* === 新增：付费锁定区域样式 === */
+
+/* 锁定容器：相对定位，为了让遮罩层盖在上面 */
+.locked-wrapper {
+    position: relative;
+    margin-top: 20px;
+    border-radius: 12px;
+    overflow: hidden; /* 防止模糊溢出 */
+    border: 1px solid #e5e7eb;
+}
+
+/* 模糊层的内容：看起来像是一份很长的报告 */
+.blur-content {
+    padding: 25px;
+    background: #fff;
+    filter: blur(6px);  /* 核心：高斯模糊 */
+    -webkit-filter: blur(6px);
+    opacity: 0.6;       /* 稍微变淡 */
+    user-select: none;  /* 禁止选中文字 */
+    pointer-events: none; /* 禁止点击里面 */
+}
+
+/* 为了让模糊看起来更真实，我们给里面的假标题加一点样式 */
+.blur-content h4 { margin: 20px 0 10px; color: #374151; font-size: 1rem; }
+.blur-content p { height: 10px; background: #e5e7eb; margin-bottom: 8px; border-radius: 4px; }
+.blur-content li { margin-bottom: 8px; color: #6b7280; }
+
+/* 遮罩层：从透明到白色的渐变 + 按钮居中 */
+.lock-overlay {
+    position: absolute;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    /* 渐变背景：上面透明，下面变白，营造“截断”感 */
+    background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.8) 40%, #ffffff 100%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 40px; /* 让按钮稍微靠下一点 */
+}
+
+/* 醒目的解锁按钮 */
+.unlock-btn {
+    background: linear-gradient(135deg, #ff4757 0%, #ff6b81 100%);
+    color: white;
+    border: none;
+    padding: 16px 32px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    box-shadow: 0 10px 25px rgba(255, 71, 87, 0.4);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: transform 0.2s;
+    animation: pulse 2s infinite; /* 心跳动画 */
+}
+
+.unlock-btn:active { transform: scale(0.95); }
+
+/* 简单的提示文字 */
+.lock-hint {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 12px;
+    background: rgba(255,255,255,0.9);
+    padding: 4px 10px;
+    border-radius: 4px;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(255, 71, 87, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
+}
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="start-screen" class="fade-in">
-        <span class="badge">SRI-PRO 心理评估系统 v4.0</span>
-        <h1>女性性心理与<br>身体愉悦模式评估</h1>
-        <p style="font-size: 0.95rem; color: #666; margin: 20px 0 30px;">
-            本测评基于<b>双重控制模型 (Dual Control Model)</b> 开发。<br>
-            包含 24 项专业维度指标，用时约 5-8 分钟。<br>
-            旨在解析您潜意识中的兴奋抑制机制与感官偏好。
-        </p>
-        <div style="text-align: left; background: #f3f4f6; padding: 15px; border-radius: 8px; font-size: 0.8rem; color: #666; margin-bottom: 30px;">
-            ✓ 匿名性保护：所有计算在本地完成<br>
-            ✓ 适宜人群：18岁以上女性<br>
-            ✓ 评估维度：感官阈值 / 心理张力 / 依恋模式
-        </div>
-        <button class="btn primary-btn" onclick="startQuiz()">开始专业评估</button>
+    <div id="result-screen" class="hidden fade-in">
+    <span class="badge" style="background: #ecfdf5; color: #059669;">评估完成</span>
+    
+    <h2 id="result-title" style="margin: 0 0 5px 0;">...</h2>
+    <p id="result-subtitle" style="color: #6b7280; font-size: 0.9rem; margin-bottom: 20px;">...</p>
+    
+    <div class="chart-box">
+        <canvas id="radarChart"></canvas>
     </div>
+
+    <div class="report-card">
+        <span class="report-title">🔬 基础分析摘要</span>
+        <p id="result-desc" class="report-text">...</p>
+    </div>
+
+    <div class="locked-wrapper">
+        
+        <div class="blur-content">
+            <h4>📊 您的核心性兴奋源 (Core Arousal)</h4>
+            <p style="width: 90%"></p><p style="width: 80%"></p><p style="width: 95%"></p>
+            
+            <h4>💡 针对 <span id="blur-type-name"></span> 的实操技巧</h4>
+            <ul>
+                <li>前戏时建议采用...</li>
+                <li>避免触碰的“灭火点”是...</li>
+                <li>最佳的引导话术推荐...</li>
+            </ul>
+
+            <h4>🧸 专属玩具与工具推荐</h4>
+            <p style="width: 85%"></p><p style="width: 60%"></p>
+            
+            <br><br><br> </div>
+
+        <div class="lock-overlay">
+            <a href="pay.html" id="unlock-btn-link" class="unlock-btn">
+                🔓 解锁完整深度报告 (¥9.9)
+            </a>
+            <div class="lock-hint">已生成 3,000 字专属解析 · 包含实操指南</div>
+        </div>
+    </div>
+    
+    <button class="btn" onclick="location.reload()" style="margin-top: 30px; text-align: center; color: #9ca3af; border: none; background: transparent;">重新测试</button>
+</div>
 
     <div id="quiz-screen" class="hidden">
         <div class="progress-bar-bg"><div class="progress-fill" id="progress"></div></div>
@@ -428,15 +534,20 @@
         const type = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
         const data = results[type];
 
+        // 填充清晰区域的内容
         document.getElementById('result-title').innerText = data.title;
         document.getElementById('result-subtitle').innerText = data.subtitle;
-        document.getElementById('result-desc').innerHTML = data.desc; // 支持HTML标签
-        document.getElementById('product-desc').innerText = data.productDesc;
-        document.getElementById('product-link').href = data.link;
+        document.getElementById('result-desc').innerHTML = data.desc; 
+        
+        // 更新模糊区域里的“假标题”，让它看起来像是专门生成的
+        // 比如显示： “针对 [Sensor | 氛围感知型] 的实操技巧”
+        document.getElementById('blur-type-name').innerText = data.title.split('|')[0]; 
+        
+        // 确保按钮链接正确
+        document.getElementById('unlock-btn-link').href = data.link;
 
         renderChart(data.stats);
     }
-
     function renderChart(dataValues) {
         const ctx = document.getElementById('radarChart').getContext('2d');
         if (window.myRadarChart) window.myRadarChart.destroy();
