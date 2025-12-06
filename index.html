@@ -194,49 +194,17 @@
 <body>
 
 <div class="container">
-    <div id="result-screen" class="hidden fade-in">
-    <span class="badge" style="background: #ecfdf5; color: #059669;">评估完成</span>
     
-    <h2 id="result-title" style="margin: 0 0 5px 0;">...</h2>
-    <p id="result-subtitle" style="color: #6b7280; font-size: 0.9rem; margin-bottom: 20px;">...</p>
-    
-    <div class="chart-box">
-        <canvas id="radarChart"></canvas>
+    <div id="start-screen" class="fade-in">
+        <span class="badge">SRI-Pro 2.0 版本</span>
+        <h1>女性性心理与身体愉悦模式<br>专业评估系统</h1>
+        <p style="color: #666; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.6;">
+            基于进化心理学与 BDSM 倾向分析模型。<br>
+            本测试将从生理敏感度、心理防御机制、依恋模式等 24 个维度，解析您潜意识中的“愉悦开关”。
+        </p>
+        <button class="btn primary-btn" onclick="startQuiz()">开始深度评估 (Start Assessment)</button>
+        <p style="font-size: 0.8rem; color: #9ca3af; margin-top: 15px;">预计用时：4 分钟 · 匿名测试</p>
     </div>
-
-    <div class="report-card">
-        <span class="report-title">🔬 基础分析摘要</span>
-        <p id="result-desc" class="report-text">...</p>
-    </div>
-
-    <div class="locked-wrapper">
-        
-        <div class="blur-content">
-            <h4>📊 您的核心性兴奋源 (Core Arousal)</h4>
-            <p style="width: 90%"></p><p style="width: 80%"></p><p style="width: 95%"></p>
-            
-            <h4>💡 针对 <span id="blur-type-name"></span> 的实操技巧</h4>
-            <ul>
-                <li>前戏时建议采用...</li>
-                <li>避免触碰的“灭火点”是...</li>
-                <li>最佳的引导话术推荐...</li>
-            </ul>
-
-            <h4>🧸 专属玩具与工具推荐</h4>
-            <p style="width: 85%"></p><p style="width: 60%"></p>
-            
-            <br><br><br> </div>
-
-        <div class="lock-overlay">
-            <a href="pay.html" id="unlock-btn-link" class="unlock-btn">
-                🔓 解锁完整深度报告 (¥9.9)
-            </a>
-            <div class="lock-hint">已生成 3,000 字专属解析 · 包含实操指南</div>
-        </div>
-    </div>
-    
-    <button class="btn" onclick="location.reload()" style="margin-top: 30px; text-align: center; color: #9ca3af; border: none; background: transparent;">重新测试</button>
-</div>
 
     <div id="quiz-screen" class="hidden">
         <div class="progress-bar-bg"><div class="progress-fill" id="progress"></div></div>
@@ -253,6 +221,7 @@
 
     <div id="result-screen" class="hidden fade-in">
         <span class="badge" style="background: #ecfdf5; color: #059669;">评估完成</span>
+        
         <h2 id="result-title" style="margin: 0 0 5px 0;">...</h2>
         <p id="result-subtitle" style="color: #6b7280; font-size: 0.9rem; margin-bottom: 20px;">...</p>
         
@@ -261,22 +230,40 @@
         </div>
 
         <div class="report-card">
-            <span class="report-title">🔬 临床分析摘要</span>
+            <span class="report-title">🔬 基础分析摘要</span>
             <p id="result-desc" class="report-text">...</p>
         </div>
 
-        <div style="text-align: left;">
-            <h4 style="margin: 0 0 10px 0; color: #1f2937;">🔒 解锁完整版深度解析</h4>
-<p id="product-desc" style="font-size: 0.9rem; color: #4b5563; margin-bottom: 20px; line-height: 1.6; background: #eff6ff; padding: 15px; border-radius: 8px; border: 1px dashed #2563eb;">...</p>
-<a href="#" id="product-link" class="rec-link" target="_blank">
-    <span>🔓 立即获取 3000 字专属报告 (¥9.9)</span>
-    <span style="opacity: 0.8;">→</span>
-</a>
-<p style="font-size: 0.75rem; color: #999; margin-top: 8px;">*包含：生理机制图解 / 心理误区 / 实操技巧 / 玩具指南</p>
+        <div class="locked-wrapper">
+            
+            <div class="blur-content">
+                <h4>📊 您的核心性兴奋源 (Core Arousal)</h4>
+                <p style="width: 90%"></p><p style="width: 80%"></p><p style="width: 95%"></p>
+                
+                <h4>💡 针对 <span id="blur-type-name"></span> 的实操技巧</h4>
+                <ul>
+                    <li>前戏时建议采用...</li>
+                    <li>避免触碰的“灭火点”是...</li>
+                    <li>最佳的引导话术推荐...</li>
+                </ul>
+
+                <h4>🧸 专属玩具与工具推荐</h4>
+                <p style="width: 85%"></p><p style="width: 60%"></p>
+                
+                <br><br><br> 
+            </div>
+
+            <div class="lock-overlay">
+                <a href="pay.html" id="unlock-btn-link" class="unlock-btn">
+                    🔓 解锁完整深度报告 (¥9.9)
+                </a>
+                <div class="lock-hint">已生成 3,000 字专属解析 · 包含实操指南</div>
+            </div>
         </div>
         
         <button class="btn" onclick="location.reload()" style="margin-top: 30px; text-align: center; color: #9ca3af; border: none; background: transparent;">重新测试</button>
     </div>
+
 </div>
 
 <script>
